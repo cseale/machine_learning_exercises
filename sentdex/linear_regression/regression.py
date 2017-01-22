@@ -34,7 +34,7 @@ def best_fit_slope_and_intercept(xs, ys):
 def squared_error(ys_orig, ys_line):
     return sum((ys_line - ys_orig) ** 2)
 
-# measure of confidence
+# measure of accuracy in the case of linear regression
 def coeffeicent_of_determination(ys_orig, ys_line):
     y_mean_line = [mean(ys_orig) for y in ys_orig]
     squared_error_regr = squared_error(ys_orig, ys_line)
