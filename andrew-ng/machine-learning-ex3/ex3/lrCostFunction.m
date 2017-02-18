@@ -38,12 +38,19 @@ grad = zeros(size(theta));
 
 
 
+% calc h
+z = X * theta;
+h=sigmoid(z);
 
+% do not regularize first theta value
+reg_theta = theta;
+reg_theta(1)= 0;
 
-
-
-
-
+% calc J (cost function)
+J = (1/m) * sum ( (-y.*log(h)) - ((1-y).*log(1-h)) ) ...
+ + (lambda/(2*m)) * sum (reg_theta.^2);
+ 
+grad = (1/m) * ( (h - y)'*X ) + ((lambda / m) * reg_theta)';
 
 % =============================================================
 
