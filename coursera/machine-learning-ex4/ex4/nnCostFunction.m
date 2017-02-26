@@ -67,10 +67,12 @@ yd = eye(num_labels);
 y = yd(y,:);
 
 % calc h
-X = [ones(m, 1) X];
-a2 = sigmoid(X * Theta1');
+a1 = [ones(m, 1) X];
+z2 = a1 * Theta1';
+a2 = sigmoid(z2);
 a2 = [ones(size(a2, 1), 1) a2];
-a3 = sigmoid(a2 * Theta2');
+z3 = a2 * Theta2';
+a3 = sigmoid(z3);
 
 % exclude the bias units
 reg_theta1 = Theta1(:, 2:end);
@@ -81,11 +83,18 @@ J= (1/m) * sum(sum ( (-y).*log(a3) - (1-y).*log(1-a3) ))...
     + ((lambda/(2*m)) * (sum(sum (reg_theta1.^2)) + sum(sum(reg_theta2.^2))));
 
 
+D_1=0;
+D_2=0;
 
-
-
-
-
+% Compute delta, tridelta and big D
+delta_3=a3-y;
+z2=[ones(m,1) z2];
+delta_2=delta_3*Theta2.*sigmoidGradient(z2);
+delta_2=delta_2(:,2:end);
+D_1=D_1+delta_2'*a1; % Same size as Theta1_grad (25x401)
+D_2=D_2+delta_3'*a2; % Same size as Theta2_grad (10x26)
+Theta1_grad=(1/m).*D_1 + (lambda/m).*[zeros(size(Theta1,1),1) Theta1(:, 2:end)]; % discard bias unit deltas
+Theta2_grad=(1/m).*D_2 + (lambda/m).*[zeros(size(Theta2,1),1) Theta2(:, 2:end)];
 
 
 
