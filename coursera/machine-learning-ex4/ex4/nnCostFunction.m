@@ -72,8 +72,13 @@ a2 = sigmoid(X * Theta1');
 a2 = [ones(size(a2, 1), 1) a2];
 a3 = sigmoid(a2 * Theta2');
 
+% exclude the bias units
+reg_theta1 = Theta1(:, 2:end);
+reg_theta2 = Theta2(:, 2:end);
+
 % calc J (cost function)
-J= (1/m) * sum(sum ( (-y).*log(a3) - (1-y).*log(1-a3) ))
+J= (1/m) * sum(sum ( (-y).*log(a3) - (1-y).*log(1-a3) ))...
+    + ((lambda/(2*m)) * (sum(sum (reg_theta1.^2)) + sum(sum(reg_theta2.^2))));
 
 
 
