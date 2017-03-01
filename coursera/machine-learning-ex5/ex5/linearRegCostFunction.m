@@ -24,9 +24,9 @@ reg_theta = [0 ; theta(2:end)];
 
 
 J = ( (1/(2*m)) * sum((h - y).^2) ) ...
-    + ((lambda/(2*m)) * sum(reg_theta.^2) )
+    + ((lambda/(2*m)) * sum(reg_theta.^2) );
 
-grad = ( ((1/m) * sum((h - y).*X)) + (lambda/m)*reg_theta' )
+grad = ( ((1/m) * sum((h - y).*X)) + (lambda/m)*reg_theta' );
 
 % =========================================================================
 
