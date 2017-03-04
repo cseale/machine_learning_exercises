@@ -1,4 +1,5 @@
 library(ggplot2)
+library(plyr)
 #######################################################
 #
 # Chapter 1 - Introduction to R
@@ -85,7 +86,7 @@ head(ufo.us)
 
 #######################################################
 #
-# Part Two - Aggregating and Organzing data
+# Part Two - Aggregating and Organizing data
 #
 #######################################################
 
@@ -104,6 +105,41 @@ ufo.us <- subset(ufo.us, DateOccured >= as.Date('1990-01-01'))
 nrow(ufo.us)
 
 # get Month and Year of Occurance
-ufo.us$YearMonth <- strftime(ufo.us$DateOccured, format = "%Y-%M")
+ufo.us$YearMonth <- strftime(ufo.us$DateOccured, format = "%Y-%m")
 head(ufo.us$YearMonth)
 
+# get count of data per state and month
+sightings.counts <- ddply(ufo.us, .(USState, YearMonth), nrow)
+head(sightings.counts)
+
+# need to fill in the YearMonth gaps with 0 values
+date.range <- seq.Date(from = min(ufo.us$DateOccured), 
+                       to = max(ufo.us$DateOccured),
+                       by = "month")
+date.strings <- strftime(date.range, format = "%Y-%m")
+
+# create a dataframe with every possible combination or year-month and US state
+states.dates <- lapply(us.states, function(s) cbind(s, date.strings))
+states.dates <- data.frame(do.call(rbind, states.dates), stringsAsFactors = FALSE)
+head(states.dates)
+
+# merge the datasets and fill the gaps with NA
+# replace all NA as zeros
+# create a list of dates for every state
+# change states to upper date
+all.sightings <- merge(states.dates, 
+                       sightings.counts, 
+                       by.x=c("s", "date.strings"),
+                       by.y=c("USState", "YearMonth"),
+                       all=TRUE)
+names(all.sightings) <- c("State", "YearMonth", "Sightings")
+all.sightings$Sightings[is.na(all.sightings$Sightings)] <- 0
+all.sightings$YearMonth <- as.Date(rep(date.range, length(us.states)))
+all.sightings$State <- as.factor(toupper(all.sightings$State))
+head(all.sightings)
+
+#######################################################
+#
+# Part Three - Analyzing the data
+#
+#######################################################
