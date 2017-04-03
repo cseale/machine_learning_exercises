@@ -25,16 +25,17 @@ for epsilon = min(pval):stepsize:max(pval)
 
 
 
+    predictions = pval < epsilon;
 
+    true_positives = sum(predictions == yval & predictions == 1);
+    false_positives = sum(predictions != yval & predictions == 1);
+    false_negatives = sum(predictions != yval & predictions == 0);
 
+    prec = true_positives / (true_positives + false_positives);
+    rec = true_positives / (true_positives + false_negatives);
 
-
-
-
-
-
-
-
+    F1 = (2 * prec * rec) / (prec + rec);
+ 
     % =============================================================
 
     if F1 > bestF1
